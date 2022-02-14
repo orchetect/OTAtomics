@@ -11,6 +11,8 @@ import Darwin
 /// By using `pthread` to do the locking, this safer than using a `DispatchQueue/barrier` as there isn't a chance of priority inversion.
 ///
 /// This is safe to use on collection types (`Array`, `Dictionary`, etc.)
+///
+/// - Warning: Do not instance this wrapper on a variable declaration inside a function. Only wrap class-bound, struct-bound, or global-bound variables.
 @propertyWrapper
 public final class OTAtomicsThreadSafe<T> {
     
