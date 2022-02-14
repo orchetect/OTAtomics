@@ -12,6 +12,7 @@ let package = Package(
     products: [
         .library(
             name: "OTAtomics",
+            type: .static,
             targets: ["OTAtomics"])
     ],
     
