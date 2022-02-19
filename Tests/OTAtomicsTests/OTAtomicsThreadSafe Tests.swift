@@ -73,8 +73,6 @@ class OTAtomicsThreadSafeTests: XCTestCase {
     
     func testAtomic_BruteForce_ConcurrentMutations() {
         
-        let completionTimeout = expectation(description: "Test Completion Timeout")
-        
         class Foo {
             @OTAtomicsThreadSafe var dict: [String: Int] = [:]
             @OTAtomicsThreadSafe var array: [String] = []
@@ -82,22 +80,14 @@ class OTAtomicsThreadSafeTests: XCTestCase {
         
         let foo = Foo()
         
-        let g = DispatchGroup()
-        
         let iterations = 10_000
         
         // append operations
         
-        for index in 0..<iterations {
-            g.enter()
-            DispatchQueue.global().async {
-                foo.dict["\(index)"] = index
-                foo.array.append("\(index)")
-                g.leave()
-            }
+        DispatchQueue.concurrentPerform(iterations: iterations) { index in
+            foo.dict["\(index)"] = index
+            foo.array.append("\(index)")
         }
-        
-        g.wait()
         
         XCTAssertEqual(foo.dict.count, iterations)
         for index in 0..<iterations {
@@ -108,21 +98,10 @@ class OTAtomicsThreadSafeTests: XCTestCase {
         
         // remove operations
         
-        for index in 0..<iterations {
-            g.enter()
-            DispatchQueue.global().async {
-                foo.dict["\(index)"] = nil
-                foo.array.remove(at: 0)
-                g.leave()
-            }
+        DispatchQueue.concurrentPerform(iterations: iterations) { index in
+            foo.dict["\(index)"] = nil
+            foo.array.remove(at: 0)
         }
-        
-        DispatchQueue.global().async {
-            g.wait()
-            completionTimeout.fulfill()
-        }
-        
-        wait(for: [completionTimeout], timeout: 10)
         
         XCTAssertEqual(foo.dict.count, 0)
         XCTAssertEqual(foo.array.count, 0)
@@ -133,8 +112,6 @@ class OTAtomicsThreadSafeTests: XCTestCase {
     /// This test is more useful with Thread Sanitizer on.
     @available(macOS 10.15, macCatalyst 13, iOS 13, tvOS 13.0, watchOS 6.0, *)
     func testAtomic_BruteForce_ConcurrentWriteRandomReads() {
-        
-        let completionTimeout = expectation(description: "Test Completion Timeout")
         
         class Foo {
             @OTAtomicsThreadSafe var dict: [String: Int] = [:]
@@ -165,27 +142,14 @@ class OTAtomicsThreadSafeTests: XCTestCase {
             }
         }
         
-        let g = DispatchGroup()
-        
         let iterations = 100_000
         
         // append operations
         
-        for index in 0..<iterations {
-            g.enter()
-            DispatchQueue.global().async {
-                foo.dict["\(index)"] = index
-                foo.array.append("\(index)")
-                g.leave()
-            }
+        DispatchQueue.concurrentPerform(iterations: iterations) { index in
+            foo.dict["\(index)"] = index
+            foo.array.append("\(index)")
         }
-        
-        DispatchQueue.global().async {
-            g.wait()
-            completionTimeout.fulfill()
-        }
-        
-        wait(for: [completionTimeout], timeout: 10)
         
         timer.cancel()
         
