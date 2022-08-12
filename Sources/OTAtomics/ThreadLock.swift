@@ -7,7 +7,6 @@ import Darwin
 
 /// Defines a basic signature to which all locks conform.
 internal protocol ThreadLock {
-    
     init()
     
     /// Lock a resource for writing. So only one thing can write, and nothing else can read or write.
@@ -18,5 +17,4 @@ internal protocol ThreadLock {
     
     /// Unlock a resource
     func unlock()
-    
 }

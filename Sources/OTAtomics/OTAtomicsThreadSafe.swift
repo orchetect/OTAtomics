@@ -15,7 +15,6 @@ import Darwin
 /// - Warning: Do not instance this wrapper on a variable declaration inside a function. Only wrap class-bound, struct-bound, or global-bound variables.
 @propertyWrapper
 public final class OTAtomicsThreadSafe<T> {
-    
     @inline(__always)
     private var value: T
     
@@ -24,14 +23,11 @@ public final class OTAtomicsThreadSafe<T> {
     
     @inline(__always)
     public init(wrappedValue value: T) {
-        
         self.value = value
-        
     }
     
     @inline(__always)
     public var wrappedValue: T {
-        
         get {
             self.lock.readLock()
             defer { self.lock.unlock() }
@@ -53,7 +49,5 @@ public final class OTAtomicsThreadSafe<T> {
             yield &value
             self.lock.unlock()
         }
-        
     }
-    
 }

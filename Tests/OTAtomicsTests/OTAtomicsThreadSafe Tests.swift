@@ -9,12 +9,10 @@ import XCTest
 import OTAtomics
 
 class OTAtomicsThreadSafeTests: XCTestCase {
-    
     override func setUp() { super.setUp() }
     override func tearDown() { super.tearDown() }
     
     func testAtomic() {
-        
         // baseline read/write functionality test on a variety of types
         
         class Bar {
@@ -25,7 +23,7 @@ class OTAtomicsThreadSafeTests: XCTestCase {
             @OTAtomicsThreadSafe var bool: Bool = true
             @OTAtomicsThreadSafe var int: Int = 5
             @OTAtomicsThreadSafe var string: String = "a string"
-            @OTAtomicsThreadSafe var dict: [String: Int] = ["Key" : 1]
+            @OTAtomicsThreadSafe var dict: [String: Int] = ["Key": 1]
             @OTAtomicsThreadSafe var array: [String] = ["A", "B", "C"]
             @OTAtomicsThreadSafe var barClass = Bar()
         }
@@ -37,7 +35,7 @@ class OTAtomicsThreadSafeTests: XCTestCase {
         XCTAssertEqual(foo.bool, true)
         XCTAssertEqual(foo.int, 5)
         XCTAssertEqual(foo.string, "a string")
-        XCTAssertEqual(foo.dict, ["Key" : 1])
+        XCTAssertEqual(foo.dict, ["Key": 1])
         XCTAssertEqual(foo.array, ["A", "B", "C"])
         XCTAssertEqual(foo.barClass.nonAtomicInt, 100)
         
@@ -52,8 +50,8 @@ class OTAtomicsThreadSafeTests: XCTestCase {
         foo.string = "a new string"
         XCTAssertEqual(foo.string, "a new string")
         
-        foo.dict = ["KeyA" : 10, "KeyB" : 20]
-        XCTAssertEqual(foo.dict, ["KeyA" : 10, "KeyB" : 20])
+        foo.dict = ["KeyA": 10, "KeyB": 20]
+        XCTAssertEqual(foo.dict, ["KeyA": 10, "KeyB": 20])
         
         foo.array = ["1", "2"]
         XCTAssertEqual(foo.array, ["1", "2"])
@@ -64,15 +62,13 @@ class OTAtomicsThreadSafeTests: XCTestCase {
         // mutate value (collections)
         
         foo.dict["KeyB"] = 30
-        XCTAssertEqual(foo.dict, ["KeyA" : 10, "KeyB" : 30])
+        XCTAssertEqual(foo.dict, ["KeyA": 10, "KeyB": 30])
         
         foo.array[1] = "3"
         XCTAssertEqual(foo.array, ["1", "3"])
-        
     }
     
     func testAtomic_BruteForce_ConcurrentMutations() {
-        
         class Foo {
             @OTAtomicsThreadSafe var dict: [String: Int] = [:]
             @OTAtomicsThreadSafe var array: [String] = []
@@ -80,7 +76,7 @@ class OTAtomicsThreadSafeTests: XCTestCase {
         
         let foo = Foo()
         
-        let iterations = 10_000
+        let iterations = 10000
         
         // append operations
         
@@ -90,7 +86,7 @@ class OTAtomicsThreadSafeTests: XCTestCase {
         }
         
         XCTAssertEqual(foo.dict.count, iterations)
-        for index in 0..<iterations {
+        for index in 0 ..< iterations {
             XCTAssertEqual(foo.dict["\(index)"], index)
         }
         
@@ -105,39 +101,41 @@ class OTAtomicsThreadSafeTests: XCTestCase {
         
         XCTAssertEqual(foo.dict.count, 0)
         XCTAssertEqual(foo.array.count, 0)
-        
     }
     
     /// Write sequential values while reading random values.
     /// This test is more useful with Thread Sanitizer on.
     @available(macOS 10.15, macCatalyst 13, iOS 13, tvOS 13.0, watchOS 6.0, *)
     func testAtomic_BruteForce_ConcurrentWriteRandomReads() {
-        
         class Foo {
             @OTAtomicsThreadSafe var dict: [String: Int] = [:]
             @OTAtomicsThreadSafe var array: [String] = []
         }
         
-        let readQueue = DispatchQueue(label: "com.orchetect.OTAtomics.AtomicTest",
-                                      qos: .default,
-                                      attributes: [],
-                                      autoreleaseFrequency: .inherit,
-                                      target: nil)
+        let readQueue = DispatchQueue(
+            label: "com.orchetect.OTAtomics.AtomicTest",
+            qos: .default,
+            attributes: [],
+            autoreleaseFrequency: .inherit,
+            target: nil
+        )
         
         let foo = Foo()
         
-        let timer = readQueue.schedule(after: DispatchQueue.SchedulerTimeType(.now()),
-                                       interval: .microseconds(1),
-                                       tolerance: .zero,
-                                       options: nil) {
+        let timer = readQueue.schedule(
+            after: DispatchQueue.SchedulerTimeType(.now()),
+            interval: .microseconds(1),
+            tolerance: .zero,
+            options: nil
+        ) {
             // dict read
-            if foo.dict.count > 0 {
-                let dictIndex = Int.random(in: 0..<foo.dict.count)
+            if !foo.dict.isEmpty {
+                let dictIndex = Int.random(in: 0 ..< foo.dict.count)
                 _ = foo.dict["\(dictIndex)"]
             }
             // array read
-            if foo.array.count > 0 {
-                let arrayIndex = Int.random(in: 0..<foo.array.count)
+            if !foo.array.isEmpty {
+                let arrayIndex = Int.random(in: 0 ..< foo.array.count)
                 _ = foo.array[arrayIndex]
             }
         }
@@ -152,13 +150,11 @@ class OTAtomicsThreadSafeTests: XCTestCase {
         }
         
         timer.cancel()
-        
     }
     
     /// Write and read sequential values concurrently.
     /// This test is more useful with Thread Sanitizer on.
     func testAtomic_BruteForce_ConcurrentWriteAndRead() {
-        
         let completionTimeout = expectation(description: "Test Completion Timeout")
         
         class Foo {
@@ -175,7 +171,7 @@ class OTAtomicsThreadSafeTests: XCTestCase {
         
         let iterations = 100_000
         
-        for index in 0..<iterations {
+        for index in 0 ..< iterations {
             writeGroup.enter()
             DispatchQueue.global().async {
                 foo.dict["key"] = index
@@ -184,11 +180,11 @@ class OTAtomicsThreadSafeTests: XCTestCase {
             }
         }
         
-        for _ in 0..<iterations {
+        for _ in 0 ..< iterations {
             readGroup.enter()
             DispatchQueue.global().async {
                 _ = foo.dict["key"]
-                if foo.array.count > 0 { _ = foo.array[0] }
+                if !foo.array.isEmpty { _ = foo.array[0] }
                 readGroup.leave()
             }
         }
@@ -200,7 +196,6 @@ class OTAtomicsThreadSafeTests: XCTestCase {
         }
         
         wait(for: [completionTimeout], timeout: 10)
-        
     }
     
 }

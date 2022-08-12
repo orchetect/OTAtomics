@@ -6,7 +6,6 @@
 import Darwin
 
 internal final class RWThreadLock: ThreadLock {
-    
     @inline(__always)
     private var lock = pthread_rwlock_t()
     
@@ -36,6 +35,4 @@ internal final class RWThreadLock: ThreadLock {
     func unlock() {
         pthread_rwlock_unlock(&lock)
     }
-    
 }
-
