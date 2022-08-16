@@ -198,6 +198,19 @@ class OTAtomicsThreadSafeTests: XCTestCase {
         wait(for: [completionTimeout], timeout: 10)
     }
     
+    // this test doesn't do much; could be removed. was added on a hunch.
+    func testMemory() {
+        class Foo {
+            @OTAtomicsThreadSafe var dict: [String: Int] = [:]
+            @OTAtomicsThreadSafe var array: [String] = []
+        }
+        
+        var foo: Foo? = Foo()
+        foo?.dict["key"] = 1
+        foo?.array.append("1")
+        
+        foo = nil
+    }
 }
 
 #endif
