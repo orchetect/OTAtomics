@@ -1,6 +1,7 @@
 //
 //  OTAtomicsThreadSafe Tests.swift
 //  OTAtomics • https://github.com/orchetect/OTAtomics
+//  © 2022 Steffan Andrews • Licensed under MIT License
 //
 
 #if shouldTestCurrentPlatform

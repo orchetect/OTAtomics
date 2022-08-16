@@ -1,6 +1,7 @@
 //
 //  OTAtomicsThreadSafe.swift
 //  OTAtomics • https://github.com/orchetect/OTAtomics
+//  © 2022 Steffan Andrews • Licensed under MIT License
 //
 
 import Darwin
@@ -29,15 +30,15 @@ public final class OTAtomicsThreadSafe<T> {
     @inline(__always)
     public var wrappedValue: T {
         get {
-            self.lock.readLock()
+            lock.readLock()
             defer { self.lock.unlock() }
-            return self.value
+            return value
         }
         
         set {
-            self.lock.writeLock()
+            lock.writeLock()
             value = newValue
-            self.lock.unlock()
+            lock.unlock()
         }
         
         // _modify { } is an internal Swift computed setter, similar to set { }

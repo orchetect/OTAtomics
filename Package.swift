@@ -13,7 +13,8 @@ let package = Package(
         .library(
             name: "OTAtomics",
             type: .static,
-            targets: ["OTAtomics"])
+            targets: ["OTAtomics"]
+        )
     ],
     
     dependencies: [
@@ -23,10 +24,12 @@ let package = Package(
     targets: [
         .target(
             name: "OTAtomics",
-            dependencies: []),
+            dependencies: []
+        ),
         .testTarget(
             name: "OTAtomicsTests",
-            dependencies: ["OTAtomics"])
+            dependencies: ["OTAtomics"]
+        )
     ]
 )
 
