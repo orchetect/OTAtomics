@@ -16,11 +16,11 @@ class OTAtomicsThreadSafeTests: XCTestCase {
     func testAtomic() {
         // baseline read/write functionality test on a variety of types
         
-        class Bar {
+        struct Bar: Sendable {
             var nonAtomicInt: Int = 100
         }
         
-        class Foo {
+        struct Foo: Sendable {
             @OTAtomicsThreadSafe var bool: Bool = true
             @OTAtomicsThreadSafe var int: Int = 5
             @OTAtomicsThreadSafe var string: String = "a string"
@@ -70,7 +70,7 @@ class OTAtomicsThreadSafeTests: XCTestCase {
     }
     
     func testAtomic_BruteForce_ConcurrentMutations() {
-        class Foo {
+        struct Foo: Sendable {
             @OTAtomicsThreadSafe var dict: [String: Int] = [:]
             @OTAtomicsThreadSafe var array: [String] = []
         }
@@ -108,7 +108,7 @@ class OTAtomicsThreadSafeTests: XCTestCase {
     /// This test is more useful with Thread Sanitizer on.
     @available(macOS 10.15, macCatalyst 13, iOS 13, tvOS 13.0, watchOS 6.0, *)
     func testAtomic_BruteForce_ConcurrentWriteRandomReads() {
-        class Foo {
+        struct Foo: Sendable {
             @OTAtomicsThreadSafe var dict: [String: Int] = [:]
             @OTAtomicsThreadSafe var array: [String] = []
         }
@@ -158,7 +158,7 @@ class OTAtomicsThreadSafeTests: XCTestCase {
     func testAtomic_BruteForce_ConcurrentWriteAndRead() {
         let completionTimeout = expectation(description: "Test Completion Timeout")
         
-        class Foo {
+        struct Foo: Sendable {
             @OTAtomicsThreadSafe var dict: [String: Int] = [:]
             @OTAtomicsThreadSafe var array: [String] = []
         }
@@ -201,7 +201,7 @@ class OTAtomicsThreadSafeTests: XCTestCase {
     
     // this test doesn't do much; could be removed. was added on a hunch.
     func testMemory() {
-        class Foo {
+        struct Foo: Sendable {
             @OTAtomicsThreadSafe var dict: [String: Int] = [:]
             @OTAtomicsThreadSafe var array: [String] = []
         }
