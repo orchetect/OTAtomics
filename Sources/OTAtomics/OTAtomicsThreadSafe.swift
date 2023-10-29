@@ -16,7 +16,7 @@ import Darwin
 /// - Warning: Do not instantiate this wrapper on a variable declaration inside a function body or
 ///   closure body. Only wrap static or instance variables.
 @propertyWrapper
-public final class OTAtomicsThreadSafe<T> {
+public final class OTAtomicsThreadSafe<T>: @unchecked Sendable where T: Sendable {
     @inline(__always)
     private var value: T
     
