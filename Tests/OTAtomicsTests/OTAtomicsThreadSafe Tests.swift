@@ -4,8 +4,6 @@
 //  © 2022 Steffan Andrews • Licensed under MIT License
 //
 
-#if shouldTestCurrentPlatform
-
 import XCTest
 import OTAtomics
 
@@ -213,5 +211,3 @@ class OTAtomicsThreadSafeTests: XCTestCase {
         foo = nil
     }
 }
-
-#endif
